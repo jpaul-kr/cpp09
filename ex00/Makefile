@@ -1,4 +1,4 @@
-NAME = easyfind
+NAME = btc
 
 CC = c++ -std=c++98
 RM = rm -rf
