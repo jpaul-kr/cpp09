@@ -16,6 +16,8 @@ class BitcoinExchange
 		~BitcoinExchange();
 
 		BitcoinExchange&	operator=(const BitcoinExchange& cpy);
+		void			addData(const string file);
+		void			add_to_map(const string str);
 };
 
 #endif
