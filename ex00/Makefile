@@ -4,7 +4,7 @@ CC = c++ -std=c++98
 RM = rm -rf
 CFLAGS = -Wall -Werror -Wextra -fsanitize=address
 
-SRC = main.cpp
+SRC = main.cpp BitcoinExchange.cpp
 
 OBJ = $(SRC:.cpp=.o)
 
