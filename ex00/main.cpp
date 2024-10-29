@@ -8,6 +8,5 @@ int	main(int  argc, char **argv)
 	BitcoinExchange	b;
 
 	b.addData("cpp_09/data.csv");
-	b.print_data();
 
 }
