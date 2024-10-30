@@ -29,22 +29,26 @@ class BitcoinExchange
 
 		class	BadInputException : std::invalid_argument
 		{
-			BadInputException(string date);
+			public:
+				BadInputException(string str);
 		};
 
 		class	NotPositiveException : std::out_of_range
 		{
-			NotPositiveException("Error: ");
+			public:
+				NotPositiveException(string str);
 		};
 
 		class	TooLargeException : std::out_of_range
 		{
-			TooLargeException("Error: ");
+			public:
+				TooLargeException(string str);
 		};
 
 		class	CouldNotOpenException : std::logic_error
 		{
-			CouldNotOpenException(string str);
+			public:
+				CouldNotOpenException(string str);
 		};
 };
 

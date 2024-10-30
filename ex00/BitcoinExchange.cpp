@@ -23,7 +23,7 @@ void			BitcoinExchange::addData(const string file)
 	string		str;
 
 	if (ifs.rdstate())
-		throw std::logic_error("\terror with file database");
+		throw CouldNotOpenException("\tcould not open file database");
 	std::getline(ifs, str);
 
 	while (!ifs.eof())
@@ -51,34 +51,66 @@ void			BitcoinExchange::process_input(string input)
 	string		date;
 	int		pipe;
 
+	if (ifs.rdstate())
+		throw CouldNotOpenException("could not open input file");
 	std::getline(ifs, str);
 	while (!ifs.eof())
 	{
-		std::getline(ifs, str);
-		pipe = str.find(" | ");
-		if (pipe == -1)
-			throw BadInputException("| missing");
-		date = str.substr(0, pipe);
-		check_date(date);
-		process_data(date, str.substr(pipe + 1, str.length()));
+		try
+		{
+			std::getline(ifs, str);
+			pipe = str.find(" | ");
+			if (pipe == -1)
+				throw BadInputException("| missing");
+			date = str.substr(0, pipe);
+			check_date(date);
+			process_data(date, str.substr(pipe + 3, str.length()));
+		}
+		catch(std::exception& e)
+		{
+			std::cout << e.what() << std::endl;
+		}
 	}
 }
 
-void			BitcoinExchange::process_data() // si la key existe: calcular y sacar resultado, 
-{							// sino primero crear nueva key y usar find para pillar el iter y hacer iter--;
+void			BitcoinExchange::process_data(string date, string val)
+{
+	float					num = static_cast<float>(atof(val.c_str()));
+	std::map<string, float>::iterator	it;
+	string					auxdate = date;
+
+	//std::cout << num << std::endl;
+	//std::cout << val << std::endl;
+	if (val != "0" && val != "0.0" && num == 0)
+		throw BadInputException(val);
+	else if (num > 1000)
+		throw TooLargeException("Error: ");
+	else if (num < 0)
+		throw NotPositiveException("Error: ");
+
+	if (this->data.find(date) == this->data.end())
+	{
+		this->data[date] = -1;
+		it = this->data.find(date);
+		it--;
+		auxdate = it->first;
+		this->data.erase(++it);
+	}
+	std::cout << date << " => " << num << " = " << num * this->data[auxdate] << std::endl;
 }
 
 void			BitcoinExchange::check_date(string date)
 {
-	int	y = atoi(date.substr(0, 4));
-	int	m = atoi(date.substr(5, 2));
-	int	d = atoi(date.substr(8, 2));
+	int	y = atoi(date.substr(0, 4).c_str());
+	int	m = atoi(date.substr(5, 2).c_str());
+	int	d = atoi(date.substr(8, 2).c_str());
 
-	for (int i = 0; i < date.length(); i++)
+	for (size_t i = 0; i < date.length(); i++)
 	{
-		if (((i == 4 || i == 7) && date[i] != '-') || (date[i] < '0' || date[i] > '9'))
+		if ((i == 4 || i == 7 || date[i] < '0' || date[i] > '9') && date[i] != '-')
 			throw BadInputException(date);
 	}
+	//std::cout << y << " " << m << " " << d << std::endl;
 	if (y > 2022 || y < 2009 || m < 1 || m > 12 || d < 1 || d > 31)
 		throw BadInputException(date);
 }
