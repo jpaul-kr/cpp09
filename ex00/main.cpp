@@ -11,7 +11,7 @@ int	main(int  argc, char **argv)
 		b.addData("cpp_09/data.csv");
 		b.process_input(argv[1]);
 	}
-	catch(std::exception& e)
+	catch(BitcoinExchange::CouldNotOpenException& e)
 	{
 		std::cout << e.what() << std::endl; 
 	}

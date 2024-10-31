@@ -27,25 +27,25 @@ class BitcoinExchange
 		void			process_data(string date, string val);
 		void			process_input(string input);
 
-		class	BadInputException : std::invalid_argument
+		class	BadInputException : public std::logic_error
 		{
 			public:
 				BadInputException(string str);
 		};
 
-		class	NotPositiveException : std::out_of_range
+		class	NotPositiveException : public std::out_of_range
 		{
 			public:
 				NotPositiveException(string str);
 		};
 
-		class	TooLargeException : std::out_of_range
+		class	TooLargeException : public std::out_of_range
 		{
 			public:
 				TooLargeException(string str);
 		};
 
-		class	CouldNotOpenException : std::logic_error
+		class	CouldNotOpenException : public std::logic_error
 		{
 			public:
 				CouldNotOpenException(string str);

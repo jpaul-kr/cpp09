@@ -54,11 +54,11 @@ void			BitcoinExchange::process_input(string input)
 	if (ifs.rdstate())
 		throw CouldNotOpenException("could not open input file");
 	std::getline(ifs, str);
+	std::getline(ifs, str);
 	while (!ifs.eof())
 	{
 		try
 		{
-			std::getline(ifs, str);
 			pipe = str.find(" | ");
 			if (pipe == -1)
 				throw BadInputException("| missing");
@@ -66,10 +66,19 @@ void			BitcoinExchange::process_input(string input)
 			check_date(date);
 			process_data(date, str.substr(pipe + 3, str.length()));
 		}
-		catch(std::exception& e)
+		catch(BadInputException& e)
 		{
 			std::cout << e.what() << std::endl;
 		}
+		catch(TooLargeException& e)
+		{
+			std::cout << e.what() << std::endl;
+		}
+		catch(NotPositiveException& e)
+		{
+			std::cout << e.what() << std::endl;
+		}
+		std::getline(ifs, str);
 	}
 }
 
@@ -105,6 +114,8 @@ void			BitcoinExchange::check_date(string date)
 	int	m = atoi(date.substr(5, 2).c_str());
 	int	d = atoi(date.substr(8, 2).c_str());
 
+	if (date.length() != 10)
+		throw BadInputException(date);
 	for (size_t i = 0; i < date.length(); i++)
 	{
 		if ((i == 4 || i == 7 || date[i] < '0' || date[i] > '9') && date[i] != '-')
@@ -115,7 +126,7 @@ void			BitcoinExchange::check_date(string date)
 		throw BadInputException(date);
 }
 
-BitcoinExchange::BadInputException::BadInputException(string str) : std::invalid_argument("Error: bad input => " + str) {}
+BitcoinExchange::BadInputException::BadInputException(string str) : std::logic_error("Error: bad input => " + str) {}
 
 BitcoinExchange::NotPositiveException::NotPositiveException(string str) : std::out_of_range(str + "not a positive number") {}
 
