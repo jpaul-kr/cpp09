@@ -61,7 +61,7 @@ void			BitcoinExchange::process_input(string input)
 		{
 			pipe = str.find(" | ");
 			if (pipe == -1)
-				throw BadInputException("| missing");
+				throw BadInputException("bad use or no use of '|'");
 			date = str.substr(0, pipe);
 			check_date(date);
 			process_data(date, str.substr(pipe + 3, str.length()));
@@ -88,8 +88,6 @@ void			BitcoinExchange::process_data(string date, string val)
 	std::map<string, float>::iterator	it;
 	string					auxdate = date;
 
-	//std::cout << num << std::endl;
-	//std::cout << val << std::endl;
 	if (val != "0" && val != "0.0" && num == 0)
 		throw BadInputException(val);
 	else if (num > 1000)
@@ -110,20 +108,32 @@ void			BitcoinExchange::process_data(string date, string val)
 
 void			BitcoinExchange::check_date(string date)
 {
+	if (date.length() != 10)
+		throw BadInputException(date);
+
 	int	y = atoi(date.substr(0, 4).c_str());
 	int	m = atoi(date.substr(5, 2).c_str());
 	int	d = atoi(date.substr(8, 2).c_str());
 
-	if (date.length() != 10)
-		throw BadInputException(date);
 	for (size_t i = 0; i < date.length(); i++)
 	{
 		if ((i == 4 || i == 7 || date[i] < '0' || date[i] > '9') && date[i] != '-')
 			throw BadInputException(date);
 	}
-	//std::cout << y << " " << m << " " << d << std::endl;
 	if (y > 2022 || y < 2009 || m < 1 || m > 12 || d < 1 || d > 31)
 		throw BadInputException(date);
+}
+
+void			BitcoinExchange::check_value(string val)
+{
+	bool	flag = false;
+	for (int i = 0; i < val.length(); i++)
+	{
+		if ((val[i] > '9' || val[i] < '0') && flag)
+			throw BadInputException(val);
+		if (val[i] < '9' && val[i] > '0')
+			flag = true;
+	}
 }
 
 BitcoinExchange::BadInputException::BadInputException(string str) : std::logic_error("Error: bad input => " + str) {}

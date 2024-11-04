@@ -2,12 +2,12 @@
 
 int	main(int  argc, char **argv)
 {
-	if (argc != 2)
-		return 1;
 	BitcoinExchange	b;
 
 	try
 	{
+		if (argc != 2)
+			throw BitcoinExchange::CouldNotOpenException("bad input arguments");
 		b.addData("cpp_09/data.csv");
 		b.process_input(argv[1]);
 	}
