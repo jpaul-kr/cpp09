@@ -12,6 +12,12 @@ class BitcoinExchange
 {
 	private:
 		std::map<string, float>	data;
+		
+		void			check_value(string value);
+		void			add_to_map(const string str);
+		void			process_input(string input);
+		void			check_date(string date);
+		void			print_data();
 
 	public:
 		BitcoinExchange();
@@ -21,11 +27,7 @@ class BitcoinExchange
 
 		BitcoinExchange&	operator=(const BitcoinExchange& cpy);
 		void			addData(const string file);
-		void			add_to_map(const string str);
-		void			print_data();
-		void			check_date(string date);
 		void			process_data(string date, string val);
-		void			process_input(string input);
 
 		class	BadInputException : public std::logic_error
 		{

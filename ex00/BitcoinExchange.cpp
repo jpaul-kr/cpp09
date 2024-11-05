@@ -60,10 +60,10 @@ void			BitcoinExchange::process_input(string input)
 		try
 		{
 			pipe = str.find(" | ");
-			if (pipe == -1)
-				throw BadInputException("bad use or no use of '|'");
 			date = str.substr(0, pipe);
 			check_date(date);
+			if (pipe == -1)
+				throw BadInputException("bad use or no use of '|'");
 			process_data(date, str.substr(pipe + 3, str.length()));
 		}
 		catch(BadInputException& e)
@@ -84,13 +84,13 @@ void			BitcoinExchange::process_input(string input)
 
 void			BitcoinExchange::process_data(string date, string val)
 {
+	check_value(val);
+
 	float					num = static_cast<float>(atof(val.c_str()));
 	std::map<string, float>::iterator	it;
 	string					auxdate = date;
 
-	if (val != "0" && val != "0.0" && num == 0)
-		throw BadInputException(val);
-	else if (num > 1000)
+	if (num > 1000)
 		throw TooLargeException("Error: ");
 	else if (num < 0)
 		throw NotPositiveException("Error: ");
@@ -126,13 +126,18 @@ void			BitcoinExchange::check_date(string date)
 
 void			BitcoinExchange::check_value(string val)
 {
-	bool	flag = false;
-	for (int i = 0; i < val.length(); i++)
+	int	poinf = 0;
+	int	minf = 0;
+	for (size_t i = 0; i < val.length(); i++)
 	{
-		if ((val[i] > '9' || val[i] < '0') && flag)
+		if ((val[i] > '9' || val[i] < '0') && ((val[i] < 9 || val[i] > 13) && val[i] != ' ') && val[i] != '.' && val[i] != '-')
 			throw BadInputException(val);
-		if (val[i] < '9' && val[i] > '0')
-			flag = true;
+		if (val[i] == '.' || val[i] == '-')
+		{
+			val[i] == '.' ? poinf++ : minf++;
+			if (poinf > 1 || minf > 1)
+				throw BadInputException(val);
+		}
 	}
 }
 
