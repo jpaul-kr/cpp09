@@ -19,12 +19,14 @@ class	RPN
 
 		RPN&	operator=(const RPN& cpy);
 		void	addArguments(string arg);
+		void	rpn_calculate();
+		void	operate(char oper, char& in_line);
 
 		class	ErrorException : public std::logic_error
 		{
 			public:
 				ErrorException();
-		}
+		};
 };
 
 #endif

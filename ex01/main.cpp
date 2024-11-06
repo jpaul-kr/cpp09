@@ -2,9 +2,17 @@
 
 int	main(int argc, char** argv)
 {
-	if (argc != 2)
-		throw ErrorException::ErrorException();
-	RPN	rpn;
+	try
+	{
+		if (argc != 2)
+			throw RPN::ErrorException();
+		RPN	rpn;
 
-	rpn.addAArguments(argv[1]);
+		rpn.addArguments(argv[1]);
+		rpn.rpn_calculate();
+	}
+	catch (RPN::ErrorException& e)
+	{
+		std::cout << e.what() << std::endl;
+	}
 }
