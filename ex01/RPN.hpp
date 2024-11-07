@@ -9,7 +9,7 @@ using std::string;
 class	RPN
 {
 	private:
-		std::stack<int>		stack;
+		std::stack<float>		stack;
 		std::deque<char>	deque;
 	
 	public:
@@ -20,7 +20,7 @@ class	RPN
 		RPN&	operator=(const RPN& cpy);
 		void	addArguments(string arg);
 		void	rpn_calculate();
-		void	operate(char oper, char& in_line);
+		void	operate(char oper);
 
 		class	ErrorException : public std::logic_error
 		{
