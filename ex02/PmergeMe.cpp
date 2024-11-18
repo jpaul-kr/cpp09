@@ -27,6 +27,11 @@ PmergeMe&	PmergeMe::operator=(const PmergeMe& cpy)
 	return *this;
 }
 
+std::list<unsigned int>		PmergeMe::getList()
+{
+	return this->lst;
+}
+
 void		PmergeMe::print_lst()
 {
 	std::list<unsigned int>::iterator	it;
@@ -46,13 +51,18 @@ void		PmergeMe::print_vec()
 		
 }
 
-std::list<unsigned int>		PmergeMe::list_merge(std::list<unsigned int> param1, std::list<unsigned int> param2)
+std::list<unsigned int>		PmergeMe::list_merge(std::list<unsigned int>& param1, std::list<unsigned int>& param2)
 {
 	std::list<unsigned int>			first;
 	std::list<unsigned int>			second;
 	std::list<unsigned int>::iterator	it;
 
-
+	/*for (it = param1.begin(); it != param1.end(); it++)
+		std::cout  << *it << " ";
+	std::cout << "| ";
+	for (it = param2.begin(); it != param2.end(); it++)
+		std::cout  << *it << " ";
+	std::cout << std::endl;*/
 	if (param1.size() > 1)
 	{
 		it = param1.begin();
@@ -61,14 +71,23 @@ std::list<unsigned int>		PmergeMe::list_merge(std::list<unsigned int> param1, st
 		second.insert(second.begin(), it, param1.end());
 		param1 = list_merge(first, second);
 	}
+	first.clear();
+	second.clear();
 	if (param2.size() > 1)
 	{
 		it = param2.begin();
 		std::advance(it, param2.size() / 2);
 		first.insert(first.begin(), param2.begin(), it);
 		second.insert(second.begin(), it, param2.end());
-		param1 = list_merge(first, second);
+		param2 = list_merge(first, second);
 	}
-	first.merge(second);
-	return first;
+	param1.merge(param2);
+	return param1;
+}
+
+void	PmergeMe::merge_process()
+{
+	std::list<unsigned int>	aux;
+
+	this->lst = list_merge(this->lst, aux);
 }
