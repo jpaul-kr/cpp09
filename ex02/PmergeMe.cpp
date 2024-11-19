@@ -51,6 +51,26 @@ void		PmergeMe::print_vec()
 		
 }
 
+std::list<unsigned int>		PmergeMe::merge_lists(std::list<unsigned int> param1, std::list<unsigned int> param2)
+{
+	std::list<unsigned int>			aux;
+	std::list<unsigned int>::iterator	it1 = param1.begin();
+	std::list<unsigned int>::iterator	it2 = param2.begin();
+
+	while (it1 != param1.end() && it2 != param2.end())
+	{
+		if (*it1 < *it2)
+			aux.push_back(*(it1++));
+		else
+			aux.push_back(*(it2++));
+	}
+	while (it1 != param1.end())
+		aux.push_back(*(it1++));
+	while (it2 != param2.end())
+		aux.push_back(*(it2++));
+	return aux;
+}
+
 std::list<unsigned int>		PmergeMe::list_merge(std::list<unsigned int>& param1, std::list<unsigned int>& param2)
 {
 	std::list<unsigned int>			first;
@@ -81,7 +101,7 @@ std::list<unsigned int>		PmergeMe::list_merge(std::list<unsigned int>& param1, s
 		second.insert(second.begin(), it, param2.end());
 		param2 = list_merge(first, second);
 	}
-	param1.merge(param2);
+	param1 = merge_lists(param1, param2);
 	return param1;
 }
 

@@ -26,6 +26,7 @@ class PmergeMe
 		void			print_vec();
 		void			merge_process();
 		std::list<unsigned int>	list_merge(std::list<unsigned int>& param1, std::list<unsigned int>& param2);
+		std::list<unsigned int>	merge_lists(std::list<unsigned int> param1, std::list<unsigned int> param2);
 		std::list<unsigned int>	getList();
 };
 
