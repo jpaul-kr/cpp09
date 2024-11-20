@@ -2,11 +2,18 @@
 
 int	main(int argc, char** argv)
 {
-	if (argc < 2)
-		return 0;
+	try
+	{
+		if (argc < 2)
+			throw PmergeMe::errorException();
 
-	PmergeMe		merge(&argv[1]);
+		PmergeMe		merge(&argv[1]);
 
-	merge.merge_process();
-	merge.print_lst();
+		merge.merge_process();
+		merge.print_time();
+	}
+	catch (PmergeMe::errorException&	e)
+	{
+		std::cout << e.what() << std::endl;
+	}
 }
