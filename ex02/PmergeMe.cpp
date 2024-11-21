@@ -113,20 +113,7 @@ std::vector<unsigned int>		PmergeMe::merge_vectors(std::vector<unsigned int> par
 	std::vector<unsigned int>		aux;
 	size_t					i = 0;
 	size_t					j = 0;
-	/*std::vector<unsigned int>::iterator	it1 = param1.begin();
-	std::vector<unsigned int>::iterator	it2 = param2.begin();
 
-	while (it1 != param1.end() && it2 != param2.end())
-	{
-		if (*it1 < *it2)
-			aux.push_back(*(it1++));
-		else
-			aux.push_back(*(it2++));
-	}
-	while (it1 != param1.end())
-		aux.push_back(*(it1++));
-	while (it2 != param2.end())
-		aux.push_back(*(it2++));*/
 	while (i < param1.size() && j < param2.size())
 	{
 		if (param1[i] < param2[j])
@@ -192,7 +179,6 @@ void	PmergeMe::merge_process()
 	this->vec = vector_merge(this->vec, auxvec);
 	gettimeofday(&end, NULL);
 	this->vecTime = (end.tv_sec - start.tv_sec) * MICROSEC + end.tv_usec - start.tv_usec;
-	print_vec();
 }
 
 PmergeMe::errorException::errorException() : std::logic_error("\terror") {}
