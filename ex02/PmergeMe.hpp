@@ -20,6 +20,7 @@ class PmergeMe
 		unsigned int			amount;
 		float				vecTime;
 		float				lstTime;
+		static int			jacobs[15];
 
 	public:
 		PmergeMe(char** arg);
