@@ -10,7 +10,8 @@ int	main(int argc, char** argv)
 		PmergeMe		merge(&argv[1]);
 
 		merge.merge_process();
-		merge.print_time();
+		//merge.print_time();
+		merge.print_vec();
 	}
 	catch (PmergeMe::errorException&	e)
 	{

@@ -1,6 +1,6 @@
 #include "PmergeMe.hpp"
 
-static int	jacobs = {0, 2, 2, 6, 10, 22, 42, 87, 170, 342, 682, 1366, 2730, 5462, 10922};
+//static int	jacobs[15] = {0, 2, 2, 6, 10, 22, 42, 87, 170, 342, 682, 1366, 2730, 5462, 10922};
 
 PmergeMe::PmergeMe(char** arg) 
 {
@@ -62,46 +62,71 @@ void		PmergeMe::print_result()
 		
 }
 
-std::list<unsigned int>		PmergeMe::merge_lists(std::list<unsigned int>& src, size_t& groupsize, size_t& groups)
+void		PmergeMe::insert_group(std::vector<unsigned int>& main, std::vector<unsigned int> src, size_t init, size_t end)
 {
-	std::list<unsigned int>	aux = src;
-
-	if (groupsize * groups < src.size())
+	//std::cout << init << std::endl;
+//	std::cout << end << std::endl;
+	for (size_t i = init; i < end; i++)
 	{
-		for (size_t i = 0; i < groups; i++)
-		{
-			if (src)
-		}
-	}
-}
-
-std::list<unsigned int>		PmergeMe::list_merge(std::list<unsigned int> src, size_t& groupsize)
-{
-	std::list<unsigned int>		main;
-	size_t				groups = src.size() / groupsize;
-
-	if (groups * groupsize < src.size())
-	{
-		groupsize *= 2;
+		main.push_back(src[i]);
 	}
 }
 
 std::vector<unsigned int>		PmergeMe::merge_vectors(std::vector<unsigned int>& src, size_t&	groupsize)
 {
 	size_t				groups = src.size() / groupsize;
-	std::vector<unsigned int>	aux = src;
+	std::vector<unsigned int>	aux;
 
-	if (groups * groupsize < src.size())
+/*	if (groups * groupsize < src.size())
 	{
 	}
+	else
+	{
+		for (size_t i = 1; i  < groups; i++)
+		{
+			size_t	pos = i * groupsize - 1;
+
+			if (src[pos] < src[pos - groupsize / 2])
+			{
+				aux.insert_group(aux, src, src[pos - groupsize / 2], src[pos]);
+				aux.insert_group(aux, src, src[pos - groupsize + 1], src[pos - groupsize / 2]);
+			}
+			else
+			{
+				aux.insert_group(aux, src, src[pos - groupsize + 1], src[pos - groupsize / 2]);
+				aux.insert_group(aux, src, src[pos - groupsize / 2], src[pos]);
+			}
+		}
+	}*/
+	//std::cout << src[0] << src[1] << src[2] << src[3] << std::endl;
+		for (size_t i = 1; i  <= groups; i++)
+		{
+			size_t	pos = i * groupsize - 1;
+
+			std::cout << pos - groupsize + 1 << std::endl;
+			std::cout << pos << std::endl;
+			if (src[pos] < src[pos - groupsize / 2])
+			{
+				insert_group(aux, src, pos - groupsize / 2, pos);
+				insert_group(aux, src, pos - groupsize + 1, pos - groupsize / 2);
+			}
+			else
+			{
+				insert_group(aux, src, pos - groupsize + 1, pos - groupsize / 2);
+				insert_group(aux, src, pos - groupsize / 2, pos);
+			}
+		}
+	//std::cout << aux[0] << std::endl;
+		return aux;
 }
 
 std::vector<unsigned int>		PmergeMe::vector_merge(std::vector<unsigned int>& src)
 {
 	std::vector<unsigned int>	main = src;
-	size_t				groupsize = 1;
+	size_t				groupsize = 2;
 
-	merge_vectors(main, groupsize);
+	main = merge_vectors(main, groupsize);
+	return main;
 }
 
 void	PmergeMe::print_time()
@@ -112,9 +137,7 @@ void	PmergeMe::print_time()
 
 void	PmergeMe::merge_process()
 {
-	std::list<unsigned int>		auxlst;
-	std::vector<unsigned int>	auxvec;
-	struct timeval	start, end;
+	//struct timeval	start, end;
 
 	/*gettimeofday(&start, NULL);
 	this->lst = list_merge(this->lst);
@@ -123,10 +146,10 @@ void	PmergeMe::merge_process()
 
 	print_result();*/
 
-	gettimeofday(&start, NULL);
-	this->vec = vector_merge(this->vec, auxvec);
-	gettimeofday(&end, NULL);
-	this->vecTime = (end.tv_sec - start.tv_sec) * MICROSEC + end.tv_usec - start.tv_usec;
+	//gettimeofday(&start, NULL);
+	this->vec = vector_merge(this->vec);
+//	gettimeofday(&end, NULL);
+//	this->vecTime = (end.tv_sec - start.tv_sec) * MICROSEC + end.tv_usec - start.tv_usec;
 }
 
 PmergeMe::errorException::errorException() : std::logic_error("\terror") {}

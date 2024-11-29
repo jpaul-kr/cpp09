@@ -20,7 +20,7 @@ class PmergeMe
 		unsigned int			amount;
 		float				vecTime;
 		float				lstTime;
-		static int			jacobs[15];
+		//static int			jacobs[15];
 
 	public:
 		PmergeMe(char** arg);
@@ -33,11 +33,10 @@ class PmergeMe
 		void				print_time();
 		void				print_vec();
 		void				merge_process();
-		std::list<unsigned int>		list_merge(std::list<unsigned int>& param1, std::list<unsigned int>& param2);
-		std::list<unsigned int>		merge_lists(std::list<unsigned int> param1, std::list<unsigned int> param2);
 		std::list<unsigned int>		getList();
-		std::vector<unsigned int>	vector_merge(std::vector<unsigned int>& param1, std::vector<unsigned int>& param2);
-		std::vector<unsigned int>	merge_vectors(std::vector<unsigned int> param1, std::vector<unsigned int> param2);
+		std::vector<unsigned int>	vector_merge(std::vector<unsigned int>& src);
+		std::vector<unsigned int>	merge_vectors(std::vector<unsigned int>& src, size_t& groupsize);
+		void				insert_group(std::vector<unsigned int>& main, std::vector<unsigned int> src, size_t init, size_t end);
 
 		class errorException : public std::logic_error
 		{
