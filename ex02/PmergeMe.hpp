@@ -32,10 +32,12 @@ class PmergeMe
 		void				print_result();
 		void				print_time();
 		void				print_vec();
+		void				print_vec(std::vector<unsigned int> aux);
 		void				merge_process();
 		std::list<unsigned int>		getList();
 		std::vector<unsigned int>	vector_merge(std::vector<unsigned int>& src);
 		std::vector<unsigned int>	merge_vectors(std::vector<unsigned int>& src, size_t& groupsize);
+		std::vector<unsigned int>	jacob_sort(std::vector<unsigned int> src, size_t groupsize);
 		void				insert_group(std::vector<unsigned int>& main, std::vector<unsigned int> src, size_t init, size_t end);
 
 		class errorException : public std::logic_error
