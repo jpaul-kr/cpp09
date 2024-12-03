@@ -36,7 +36,7 @@ class PmergeMe
 		void				merge_process();
 		std::list<unsigned int>		getList();
 		std::vector<unsigned int>	vector_merge(std::vector<unsigned int>& src);
-		std::vector<unsigned int>	merge_vectors(std::vector<unsigned int>& src, size_t& groupsize);
+		std::vector<unsigned int>	merge_vectors(std::vector<unsigned int> src, size_t groupsize);
 		std::vector<unsigned int>	jacob_sort(std::vector<unsigned int> src, size_t groupsize);
 		void				insert_group(std::vector<unsigned int>& main, std::vector<unsigned int> src, size_t init, size_t end);
 
