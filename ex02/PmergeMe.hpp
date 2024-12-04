@@ -35,10 +35,11 @@ class PmergeMe
 		void				print_vec(std::vector<unsigned int> aux);
 		void				merge_process();
 		std::list<unsigned int>		getList();
+		void				PmergeMe::compare_and_insert(std::vector<unsigned int>& main, std::vector<unsigned int> src, size_t pos, size_t groupsize);
 		std::vector<unsigned int>	vector_merge(std::vector<unsigned int>& src);
 		std::vector<unsigned int>	merge_vectors(std::vector<unsigned int> src, size_t groupsize);
 		std::vector<unsigned int>	jacob_sort(std::vector<unsigned int> src, size_t groupsize);
-		void				insert_group(std::vector<unsigned int>& main, std::vector<unsigned int> src, size_t init, size_t end);
+		void				insert_group(std::vector<unsigned int>& main, std::vector<unsigned int> src, size_t init, size_t end, std::vector<unsigned int>::iterator pos);
 
 		class errorException : public std::logic_error
 		{

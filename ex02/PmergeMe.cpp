@@ -69,22 +69,51 @@ void		PmergeMe::print_result()
 		
 }
 
-void		PmergeMe::insert_group(std::vector<unsigned int>& main, std::vector<unsigned int> src, size_t init, size_t end)
+void		PmergeMe::insert_group(std::vector<unsigned int>& main, std::vector<unsigned int> src, size_t init, size_t end, std::vector<unsigned int>::iterator pos)
 {
 	if (end >= src.size())
 		return ;
-	for (size_t i = init; i <= end; i++)
-		main.push_back(src[i]);
+	std::vector<unsigned int>::iterator	it = src.begin();
+	std::vector<unsigned int>::iterator	ite = src.begin();
+	std::advance(it, init);
+	std::advance(ite, end + 1);
+	main.insert(pos, it, ite);
+}
+
+void		PmergeMe::compare_and_insert(std::vector<unsigned int>& main, std::vector<unsigned int> src, size_t pos, size_t groupsize)
+{
+	//TODO 
+	//en el container de main:
+	//encontrar la posicion de la pareja del grupo de pos
+	//si no tiene pues se empieza en el final.
+	//y pillar la poosicion del grupo y divivr entre 2 comparando con el grupo de en medio o de la derecha hasta que el grupo de nuestro pos sea menor
+	//y insertarlo ahi
+	while (true)
+	{
+		insert_group(main, src, pos - groupsize + 1, pos,);
+	}
 }
 
 std::vector<unsigned int>		PmergeMe::jacob_sort(std::vector<unsigned int> src, size_t groupsize)
 {
 	std::vector<unsigned int>	main;
 	size_t				groups = src.size() / groupsize;
+	size_t				prevpos = groupsize - 1;
 
-	std::cout << groups << std::endl;
 	for (size_t i = 1; i <= groups; i += 2)
-		insert_group(main, src, i * groupsize, i * groupsize + groupsize - 1);
+		insert_group(main, src, i * groupsize, i * groupsize + groupsize - 1, main.end());
+
+	insert_group(main, src, 0, groupsize - 1, main.begin());
+	for(size_t i = 1; main.size() != src.size(); i++)
+	{
+		size_t pos = ((jacob[i] + jacob[i - 1]) * 2 + 1) * groupsize - 1;
+		size_t aux = pos;
+		while (pos > prevpos)
+		{
+			compare_and_insert(main, src, pos, groupsize);	
+		}
+		prevpos = aux;
+	}
 	std::cout << "main: ";
 	print_vec(main);
 	return main;
@@ -107,13 +136,13 @@ std::vector<unsigned int>		PmergeMe::merge_vectors(std::vector<unsigned int> src
 
 			if (src[pos] < src[pos - groupsize / 2])
 			{
-				insert_group(aux, src, pos - groupsize / 2 + 1, pos);
-				insert_group(aux, src, pos - groupsize  + 1, pos - groupsize / 2);
+				insert_group(aux, src, pos - groupsize / 2 + 1, pos, aux.end());
+				insert_group(aux, src, pos - groupsize  + 1, pos - groupsize / 2, aux.end());
 			}
 			else
 			{
-				insert_group(aux, src, pos - groupsize + 1, pos - groupsize / 2);
-				insert_group(aux, src, pos - groupsize / 2 + 1, pos);
+				insert_group(aux, src, pos - groupsize + 1, pos - groupsize / 2, aux.end());
+				insert_group(aux, src, pos - groupsize / 2 + 1, pos, aux.end());
 			}
 		}
 		//std::cout << "groupsize: " << groupsize << std::endl;
@@ -121,8 +150,8 @@ std::vector<unsigned int>		PmergeMe::merge_vectors(std::vector<unsigned int> src
 		//print_vec(aux);
 		aux = merge_vectors(aux, groupsize);	
 		//std::cout << pos << std::endl;
-		jacob_sort(aux, groupsize);
-		insert_group(aux, src, pos + 1, pos + groupsize / 2);
+		//jacob_sort(aux, groupsize);
+		insert_group(aux, src, pos + 1, pos + groupsize / 2, aux.end());
 	}
 	return aux;
 }
