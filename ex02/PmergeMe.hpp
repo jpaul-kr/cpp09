@@ -20,7 +20,7 @@ class PmergeMe
 		unsigned int			amount;
 		float				vecTime;
 		float				lstTime;
-		//static int			jacobs[15];
+		int				jacob[15];
 
 	public:
 		PmergeMe(char** arg);
@@ -35,7 +35,7 @@ class PmergeMe
 		void				print_vec(std::vector<unsigned int> aux);
 		void				merge_process();
 		std::list<unsigned int>		getList();
-		void				PmergeMe::compare_and_insert(std::vector<unsigned int>& main, std::vector<unsigned int> src, size_t pos, size_t groupsize);
+		void				compare_and_insert(std::vector<unsigned int>& main, std::vector<unsigned int> src, size_t pos, size_t groupsize);
 		std::vector<unsigned int>	vector_merge(std::vector<unsigned int>& src);
 		std::vector<unsigned int>	merge_vectors(std::vector<unsigned int> src, size_t groupsize);
 		std::vector<unsigned int>	jacob_sort(std::vector<unsigned int> src, size_t groupsize);
