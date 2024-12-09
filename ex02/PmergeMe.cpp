@@ -83,8 +83,9 @@ void		PmergeMe::insert_group(std::vector<unsigned int>& main, std::vector<unsign
 
 void		PmergeMe::compare_and_insert(std::vector<unsigned int>& main, std::vector<unsigned int> src, size_t pos, size_t groupsize)
 {
-	size_t					compare = 0;
-	size_t					groupindex;
+	int					compare = 0;
+	int					groupindex;
+	int					pair;
 	size_t					flag = 1;
 	std::vector<unsigned int>::iterator	it = main.begin();
 
@@ -97,12 +98,27 @@ void		PmergeMe::compare_and_insert(std::vector<unsigned int>& main, std::vector<
 		while (main[compare] != src[pos + groupsize])
 			compare++;
 	}
-	std::cout << "pos: " << pos << "compare: " << compare << std::endl;
-	while (src[pos] < main[compare])
+	pair = (compare + flag) / groupsize;
+	std::cout << "pos: " << pos << " compare: " << compare << std::endl;
+	while (src[pos] < main[compare] && compare != -1)
+	{		
+		groupindex = (compare + 1) / groupsize;
+		compare = ((--groupindex / 2) + flag) * groupsize - flag;
+		if (groupindex == 1 && src[pos] < main[compare])
+			compare = -1;
+	}
+	while (src[pos] > main[compare] && compare != -1 && compare != (int)main.size() - 1)
 	{
-		//std::cout << "pos: " << pos << "compare: " << compare << std::endl;
-		groupindex = (compare + 1) / groupsize;		// no funciona en groupsize de 1
-		compare = ((--groupindex / 2) + 1) * groupsize - flag;
+		groupindex = (compare + 1) / groupsize;
+		compare = (((pair - groupindex) / 2) + groupindex + flag) * groupsize - flag;
+		std::cout << "compare: " << compare << std::endl;
+		std::cout << "pair: " << pair << std::endl;
+		std::cout << "groupindex: " << groupindex << std::endl;
+		if (groupindex == pair)					//arreglar
+		{
+			compare -= groupsize + flag;
+			break ;
+		}
 	}
 	std::advance(it, compare + 1);
 	insert_group(main, src, pos - groupsize + 1, pos, it);
