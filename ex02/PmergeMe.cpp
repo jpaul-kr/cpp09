@@ -86,11 +86,9 @@ void		PmergeMe::compare_and_insert(std::vector<unsigned int>& main, std::vector<
 	int					compare = 0;
 	int					groupindex;
 	int					pair;
-	size_t					flag = 0;
+	//size_t					flag = 0;
 	std::vector<unsigned int>::iterator	it = main.begin();
 
-	//if (groupsize == 1)
-	//	flag = 0;
 	if (pos + groupsize >= src.size())
 		compare = main.size() - 1;
 	else
@@ -99,6 +97,7 @@ void		PmergeMe::compare_and_insert(std::vector<unsigned int>& main, std::vector<
 			compare++;
 	}
 	pair = (compare + 1) / groupsize;
+	std::cout << "num: " << src[pos] << std::endl;
 	std::cout << "pos: " << pos << " compare: " << compare << std::endl;
 	while (compare != -1 && src[pos] < main[compare])
 	{		
@@ -108,23 +107,27 @@ void		PmergeMe::compare_and_insert(std::vector<unsigned int>& main, std::vector<
 			compare = -1;
 	}
 	std::cout << "compare: " << compare << std::endl;
-	while (compare != -1 && src[pos] > main[compare] && compare != (int)main.size() - 1)   			// mirar en el caso de que pareja a(x) salga del size
+	std::cout << "pair: " << pair << std::endl;
+	while (compare != -1 && src[pos] > main[compare] && compare != (int)main.size() - 1)
 	{
-		flag = 1;
+		//flag = 1;
 		groupindex = (compare + 1) / groupsize;
 		compare = (((pair - groupindex) / 2) + groupindex) * groupsize - 1;
-		//std::cout << "compare: " << compare << std::endl;
-		//std::cout << "pair: " << pair << std::endl;
-		//std::cout << "groupindex: " << groupindex << std::endl;
 		if (groupindex == pair - 1)
 		{
 			compare++;
 			break ;
 		}
+		if (src[pos] < main[compare])
+		{
+			compare -= groupsize - 1
+		}
 	}
-	if (flag)
-		compare--;
-	std::advance(it, ++compare);
+	//if (flag)
+	//	compare--;
+	if (compare == -1)
+		compare++;
+	std::advance(it, compare);
 	insert_group(main, src, pos - groupsize + 1, pos, it);
 }
 
@@ -148,8 +151,9 @@ std::vector<unsigned int>		PmergeMe::jacob_sort(std::vector<unsigned int> src, s
 	for(size_t i = 1; main.size() < src.size(); i++)
 	{
 		size_t pos = ((jacob[i] + jacob[i - 1]) * 2 + 1) * groupsize - 1;
-		if (pos > src.size())
-			pos = src.size() - 1;
+		//std::cout << "jacob: " << pos << std::endl;
+		if (pos >= src.size())
+			pos = (groups % 2 == 0 ? src.size() - groupsize - 1 : src.size() - 1);
 		size_t aux = pos;
 		while (pos > prevpos)
 		{
