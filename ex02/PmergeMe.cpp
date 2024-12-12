@@ -53,6 +53,18 @@ void		PmergeMe::print_vec(std::vector<unsigned int> aux)
 	std::cout << std::endl;
 }
 
+void		PmergeMe::print_vec(std::vector<unsigned int> aux, size_t groupsize)
+{
+	for (size_t i = 0; i < aux.size(); i++)
+	{
+		if (i % groupsize == 0)
+			std::cout << "| ";
+		std::cout << aux[i] << " ";
+	}
+	std::cout << "|";
+	std::cout << std::endl;
+}
+
 void		PmergeMe::print_result()
 {
 	std::cout << "Before: ";
@@ -98,33 +110,36 @@ void		PmergeMe::compare_and_insert(std::vector<unsigned int>& main, std::vector<
 	}
 	pair = (compare + 1) / groupsize;
 	std::cout << "num: " << src[pos] << std::endl;
-	std::cout << "pos: " << pos << " compare: " << compare << std::endl;
-	while (compare != -1 && src[pos] < main[compare])
-	{		
-		groupindex = (compare + 1) / groupsize;
-		compare = (((groupindex - 1) / 2) + 1) * groupsize - 1;
-		if (groupindex == 1 && src[pos] < main[compare])
-			compare = -1;
-	}
-	std::cout << "compare: " << compare << std::endl;
-	std::cout << "pair: " << pair << std::endl;
-	while (compare != -1 && src[pos] > main[compare] && compare != (int)main.size() - 1)
+	//std::cout << "pos: " << pos << " compare: " << main[compare] << std::endl;
+	while (((compare != 0 && src[pos] < main[compare - groupsize]) || (compare < (int)(main.size() - 1) && src[pos] > main[compare + groupsize])) && compare != -1)
 	{
-		//flag = 1;
-		groupindex = (compare + 1) / groupsize;
-		compare = (((pair - groupindex) / 2) + groupindex) * groupsize - 1;
-		if (groupindex == pair - 1)
+		while (compare != -1 && src[pos] < main[compare])
 		{
-			compare++;
-			break ;
+			groupindex = (compare + 1) / groupsize;
+			pair = groupindex;
+			compare = (((groupindex - 1) / 2) + 1) * groupsize - 1;
+			if (groupindex == 1 && src[pos] < main[compare])
+				compare = -1;
 		}
-		if (src[pos] < main[compare])
+		//std::cout << "compare: " << compare << std::endl;
+		//std::cout << "pair: " << pair << std::endl;
+		while (compare != -1 && src[pos] > main[compare] && compare != (int)main.size() - 1)
 		{
-			compare -= groupsize - 1
+			//flag = 1;
+			groupindex = (compare + 1) / groupsize;
+			compare = (((pair - groupindex) / 2) + groupindex) * groupsize - 1;
+			if (groupindex == pair - 1)
+			{
+				compare++;
+				break ;
+			}
+			if (src[pos] < main[compare])
+			{
+				compare -= groupsize - 1;
+				break ;
+			}
 		}
 	}
-	//if (flag)
-	//	compare--;
 	if (compare == -1)
 		compare++;
 	std::advance(it, compare);
@@ -139,15 +154,15 @@ std::vector<unsigned int>		PmergeMe::jacob_sort(std::vector<unsigned int> src, s
 
 		std::cout << "groupsize: " << groupsize << std::endl;
 			std::cout << "src:  ";
-			print_vec(src);
+			print_vec(src, groupsize);
 	for (size_t i = 1; i <= groups; i += 2)
 		insert_group(main, src, i * groupsize, i * groupsize + groupsize - 1, main.end());
 
 			std::cout << "main: ";
-			print_vec(main);
+			print_vec(main, groupsize);
 	insert_group(main, src, 0, groupsize - 1, main.begin());
 			std::cout << "main: ";
-			print_vec(main);
+			print_vec(main, groupsize);
 	for(size_t i = 1; main.size() < src.size(); i++)
 	{
 		size_t pos = ((jacob[i] + jacob[i - 1]) * 2 + 1) * groupsize - 1;
@@ -160,7 +175,7 @@ std::vector<unsigned int>		PmergeMe::jacob_sort(std::vector<unsigned int> src, s
 			compare_and_insert(main, src, pos, groupsize);
 			pos -= groupsize * 2;
 			std::cout << "main: ";
-			print_vec(main);
+			print_vec(main, groupsize);
 		}
 		prevpos = aux;
 	}
@@ -197,7 +212,7 @@ std::vector<unsigned int>		PmergeMe::merge_vectors(std::vector<unsigned int> src
 			}
 		}
 		std::cout << "aux: ";
-		print_vec(aux);
+		print_vec(aux, groupsize);
 		aux = merge_vectors(aux, groupsize);	
 		//std::cout << pos << std::endl;
 		aux = jacob_sort(aux, groupsize);
