@@ -4,7 +4,7 @@ int	main(int argc, char** argv)
 {
 	try
 	{
-		if (argc < 2)
+		if (argc < 2 || argc > 10000)
 			throw PmergeMe::errorException();
 
 		PmergeMe		merge(&argv[1]);

@@ -34,6 +34,8 @@ class PmergeMe
 		void				print_vec();
 		void				print_vec(std::vector<unsigned int> aux);
 		void				print_vec(std::vector<unsigned int> aux, size_t groupsize);
+		bool				is_repeat(int n, std::vector<unsigned int> vec);
+		bool				is_valid(string arg);
 		void				merge_process();
 		std::list<unsigned int>		getList();
 		void				compare_and_insert(std::vector<unsigned int>& main, std::vector<unsigned int> src, size_t pos, size_t groupsize);
