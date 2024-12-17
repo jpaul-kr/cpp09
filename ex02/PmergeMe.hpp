@@ -4,7 +4,7 @@
 # include <iostream>
 # include <cstdlib>
 # include <iterator>
-# include <list>
+# include <deque>
 # include <vector>
 # include <sys/time.h>
 # include <iomanip>
@@ -14,12 +14,12 @@ using std::string;
 class PmergeMe
 {
 	private:
-		std::list<unsigned int>		lst;
+		std::deque<unsigned int>	deq;
 		std::vector<unsigned int>	vec;
 		string				arg;
 		unsigned int			amount;
 		float				vecTime;
-		float				lstTime;
+		float				deqTime;
 		int				jacob[15];
 
 	public:
@@ -37,12 +37,19 @@ class PmergeMe
 		bool				is_repeat(int n, std::vector<unsigned int> vec);
 		bool				is_valid(string arg);
 		void				merge_process();
-		std::list<unsigned int>		getList();
+
 		void				compare_and_insert(std::vector<unsigned int>& main, std::vector<unsigned int> src, size_t pos, size_t groupsize);
 		std::vector<unsigned int>	vector_merge(std::vector<unsigned int>& src);
 		std::vector<unsigned int>	merge_vectors(std::vector<unsigned int> src, size_t groupsize);
 		std::vector<unsigned int>	jacob_sort(std::vector<unsigned int> src, size_t groupsize);
 		void				insert_group(std::vector<unsigned int>& main, std::vector<unsigned int> src, size_t init, size_t end, std::vector<unsigned int>::iterator pos);
+
+		void				compare_and_insert(std::deque<unsigned int>& main, std::deque<unsigned int> src, size_t pos, size_t groupsize);
+		std::deque<unsigned int>	deque_merge(std::deque<unsigned int>& src);
+		std::deque<unsigned int>	merge_deques(std::deque<unsigned int> src, size_t groupsize);
+		std::deque<unsigned int>	jacob_sort(std::deque<unsigned int> src, size_t groupsize);
+		void				insert_group(std::deque<unsigned int>& main, std::deque<unsigned int> src, size_t init, size_t end, std::deque<unsigned int>::iterator pos);
+
 
 		class errorException : public std::logic_error
 		{

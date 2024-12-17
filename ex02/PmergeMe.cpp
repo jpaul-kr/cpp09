@@ -13,7 +13,7 @@ PmergeMe::PmergeMe(char** arg)
 		n = atoi(arg[i]);
 		if (!is_valid(arg[i]) || is_repeat(n, vec))
 			throw errorException();
-		this->lst.push_back(n);
+		this->deq.push_back(n);
 		this->vec.push_back(n);
 	}
 	this->amount = i;
@@ -28,15 +28,10 @@ PmergeMe::~PmergeMe() {}
 
 PmergeMe&	PmergeMe::operator=(const PmergeMe& cpy)
 {
-	this->lst = cpy.lst;
+	this->deq = cpy.deq;
 	this->vec = cpy.vec;
 	this->arg = cpy.arg;
 	return *this;
-}
-
-std::list<unsigned int>		PmergeMe::getList()
-{
-	return this->lst;
 }
 
 bool		PmergeMe::is_valid(string arg)
@@ -93,13 +88,10 @@ void		PmergeMe::print_result()
 	std::cout << std::endl;
 
 	std::cout << "After:  ";
-	std::list<unsigned int>::iterator	it;
-	std::list<unsigned int>::iterator	ite = this->lst.end();
 
-	for (it = this->lst.begin(); it != ite; it++)
-		std::cout << *it << " ";
-	std::cout << std::endl;
-		
+	for (size_t i = 0; i < deq.size(); i++)
+		std::cout << this->deq[i] << " ";
+	std::cout << std::endl;		
 }
 
 void		PmergeMe::insert_group(std::vector<unsigned int>& main, std::vector<unsigned int> src, size_t init, size_t end, std::vector<unsigned int>::iterator pos)
@@ -251,27 +243,193 @@ std::vector<unsigned int>		PmergeMe::vector_merge(std::vector<unsigned int>& src
 	return main;
 }
 
+void		PmergeMe::insert_group(std::deque<unsigned int>& main, std::deque<unsigned int> src, size_t init, size_t end, std::deque<unsigned int>::iterator pos)
+{
+	if (end >= src.size())
+		return ;
+	std::deque<unsigned int>::iterator	it = src.begin();
+	std::deque<unsigned int>::iterator	ite = src.begin();
+	std::advance(it, init);
+	std::advance(ite, end + 1);
+	main.insert(pos, it, ite);
+}
+
+void		PmergeMe::compare_and_insert(std::deque<unsigned int>& main, std::deque<unsigned int> src, size_t pos, size_t groupsize)
+{
+	int					compare = 0;
+	int					groupindex;
+	int					pair;
+	bool					flag = false;
+	std::deque<unsigned int>::iterator	it = main.begin();
+
+	if (pos + groupsize >= src.size())
+		compare = main.size() - 1;
+	else
+	{
+		while (main[compare] != src[pos + groupsize])
+			compare++;
+	}
+	pair = (compare + 1) / groupsize;
+	while (!flag && ((src[pos] < main[compare]) || (compare == (int)(main.size() - 1) || src[pos] > main[compare + groupsize])))
+	{
+		while (compare != -1 && src[pos] < main[compare])
+		{
+			groupindex = (compare + 1) / groupsize;
+			pair = groupindex;
+			compare = (((groupindex - 1) / 2) + 1) * groupsize - 1;
+			if (groupindex == 1 && src[pos] < main[compare])
+			{
+				flag = true;
+				compare = -1;
+			}
+		}
+		while (compare != -1 && src[pos] > main[compare])
+		{
+			if (compare == (int)(main.size() - 1))
+			{
+				flag = true;
+				break ;
+			}
+			groupindex = (compare + 1) / groupsize;
+			compare = (((pair - groupindex) / 2) + groupindex) * groupsize - 1;
+			if (groupindex == pair - 1)
+			{
+				flag = true;
+				break ;
+			}
+			if (src[pos] < main[compare])
+			{
+				compare -= groupsize;
+				break ;
+			}
+		}
+	}
+	std::advance(it, compare + 1);
+	insert_group(main, src, pos - groupsize + 1, pos, it);
+}
+
+std::deque<unsigned int>		PmergeMe::jacob_sort(std::deque<unsigned int> src, size_t groupsize)
+{
+	std::deque<unsigned int>	main;
+	size_t				groups = src.size() / groupsize;
+	size_t				prevpos = groupsize - 1;
+
+		//std::cout << "\tgroupsize: " << groupsize << std::endl;
+		//	std::cout << "src:  ";
+		//	print_vec(src, groupsize);
+	for (size_t i = 1; i <= groups; i += 2)
+		insert_group(main, src, i * groupsize, i * groupsize + groupsize - 1, main.end());
+
+		//	std::cout << "main: ";
+		//	print_vec(main, groupsize);
+	insert_group(main, src, 0, groupsize - 1, main.begin());
+		//	std::cout << "main: ";
+		//	print_vec(main, groupsize);
+	for(size_t i = 1; main.size() < src.size(); i++)
+	{
+		size_t pos = ((jacob[i] + jacob[i - 1]) * 2 + 1) * groupsize - 1;
+		if (pos >= src.size())
+			pos = (groups % 2 == 0 ? src.size() - groupsize - 1 : src.size() - 1);
+		size_t aux = pos;
+		while (pos > prevpos)
+		{
+			compare_and_insert(main, src, pos, groupsize);
+			pos -= groupsize * 2;
+		//	std::cout << "main: ";
+		//	print_vec(main, groupsize);
+		}
+		prevpos = aux;
+	}
+	return main;
+}
+
+std::deque<unsigned int>		PmergeMe::merge_deques(std::deque<unsigned int> src, size_t	groupsize)
+{
+	size_t				groups = src.size() / (groupsize * 2);
+	size_t				pos;
+	std::deque<unsigned int>	aux;
+
+	if (!groups)
+		groups = 1;
+	groupsize *= 2;
+	//std::cout << "groupsize: " << groupsize << std::endl;
+	if (groups * groupsize > src.size())
+		return src;
+	else
+	{
+		for (size_t i = 1; i  <= groups; i++)
+		{
+			pos = i * groupsize - 1;
+
+			if (src[pos] < src[pos - groupsize / 2])
+			{
+				insert_group(aux, src, pos - groupsize / 2 + 1, pos, aux.end());
+				insert_group(aux, src, pos - groupsize  + 1, pos - groupsize / 2, aux.end());
+			}
+			else
+			{
+				insert_group(aux, src, pos - groupsize + 1, pos - groupsize / 2, aux.end());
+				insert_group(aux, src, pos - groupsize / 2 + 1, pos, aux.end());
+			}
+		}
+	//	std::cout << "aux: ";
+	//	print_vec(aux, groupsize);
+		aux = merge_deques(aux, groupsize);	
+		aux = jacob_sort(aux, groupsize);
+		insert_group(aux, src, pos + 1, pos + groupsize / 2, aux.end());
+	}
+	if (groupsize == 2)
+		aux = jacob_sort(aux, 1);
+	return aux;
+}
+
+std::deque<unsigned int>		PmergeMe::deque_merge(std::deque<unsigned int>& src)
+{
+	std::deque<unsigned int>	main = src;
+	size_t				groupsize = 1;
+
+	main = merge_deques(main, groupsize);
+	return main;
+}
+
 void	PmergeMe::print_time()
 {
-	std::cout << "Time to process a range of " << this->amount << " elements with std::vector : " << std::setprecision(5)  << this->vecTime << " us" << std::endl;
-	std::cout << "Time to process a range of " << this->amount << " elements with std::list   : " << std::setprecision(5)  << this->lstTime << " us" << std::endl;
+	string	und = " us";
+
+	if (this->deqTime >= 1000 && this->vecTime >= 1000)
+	{
+		this->deqTime /= 1000;
+		this->vecTime /= 1000;
+		und = " ms";
+	}
+	std::cout << "Time to process a range of " << this->amount << " elements with std::vector : " << std::fixed << std::setprecision(5)  << this->vecTime << und << std::endl;
+	std::cout << "Time to process a range of " << this->amount << " elements with std::deque  : " << std::fixed << std::setprecision(5)  << this->deqTime << und << std::endl;
+	/*for (size_t i = 0; i < this->vec.size(); i++)
+	{
+		if (this->vec[i] != this->deq[i])
+		{
+			std::cout << "bad :(" << std::endl;
+			return ;
+		}
+	}
+	std::cout << "good ;)" << std::endl;*/
 }
 
 void	PmergeMe::merge_process()
 {
-	//struct timeval	start, end;
+	struct timeval	start, end;
 
-	/*gettimeofday(&start, NULL);
-	this->lst = list_merge(this->lst);
+	gettimeofday(&start, NULL);
+	this->deq = deque_merge(this->deq);
 	gettimeofday(&end, NULL);
-	this->lstTime = (end.tv_sec - start.tv_sec) * MICROSEC + end.tv_usec - start.tv_usec;
+	this->deqTime = (end.tv_sec - start.tv_sec) * MICROSEC + end.tv_usec - start.tv_usec;
 
-	print_result();*/
+	print_result();
 
-	//gettimeofday(&start, NULL);
+	gettimeofday(&start, NULL);
 	this->vec = vector_merge(this->vec);
-//	gettimeofday(&end, NULL);
-//	this->vecTime = (end.tv_sec - start.tv_sec) * MICROSEC + end.tv_usec - start.tv_usec;
+	gettimeofday(&end, NULL);
+	this->vecTime = (end.tv_sec - start.tv_sec) * MICROSEC + end.tv_usec - start.tv_usec;
 }
 
 PmergeMe::errorException::errorException() : std::logic_error("\terror") {}

@@ -15,7 +15,6 @@ class BitcoinExchange
 		
 		void			check_value(string value);
 		void			add_to_map(const string str);
-		void			process_input(string input);
 		void			check_date(string date);
 		void			print_data();
 
@@ -28,6 +27,7 @@ class BitcoinExchange
 		BitcoinExchange&	operator=(const BitcoinExchange& cpy);
 		void			addData(const string file);
 		void			process_data(string date, string val);
+		void			process_input(string input);
 
 		class	BadInputException : public std::logic_error
 		{

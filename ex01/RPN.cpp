@@ -12,7 +12,7 @@ RPN::~RPN() {}
 RPN&	RPN::operator=(const RPN& cpy)
 {
 	this->stack = cpy.stack;
-	this->deque = cpy.deque;
+	this->list = cpy.list;
 	return *this;
 }
 
@@ -24,7 +24,7 @@ void	RPN::addArguments(string arg)
 		{
 			if (isdigit(arg[i]) && isdigit(arg[i + 1]))
 				throw ErrorException();
-			this->deque.push_back(arg[i]);
+			this->list.push_back(arg[i]);
 		}
 		else if (arg[i] != ' ' && (arg[i] > 13 || arg[i] < 9))
 			throw ErrorException();
@@ -33,12 +33,14 @@ void	RPN::addArguments(string arg)
 
 void	RPN::rpn_calculate()
 {
-	for (size_t i = 0; i < this->deque.size(); i++)
+	std::list<char>::iterator	it;
+
+	for (it = this->list.begin(); it != this->list.end(); it++)
 	{
-		if (isdigit(this->deque[i]))
-			this->stack.push(this->deque[i] - '0');
+		if (isdigit(*it))
+			this->stack.push(*it - '0');
 		else
-			operate(this->deque[i]);
+			operate(*it);
 	}
 	if (this->stack.size() > 1)
 		throw ErrorException();

@@ -8,7 +8,7 @@ int	main(int  argc, char **argv)
 	{
 		if (argc != 2)
 			throw BitcoinExchange::CouldNotOpenException("bad input arguments");
-		b.addData("cpp_09/data.csv");
+		b.addData("database/data.csv");
 		b.process_input(argv[1]);
 	}
 	catch(BitcoinExchange::CouldNotOpenException& e)

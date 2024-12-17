@@ -2,6 +2,7 @@
 # define RPN_HPP
 # include <iostream>
 # include <stack>
+# include <list>
 # include <cctype>
 
 using std::string;
@@ -10,7 +11,7 @@ class	RPN
 {
 	private:
 		std::stack<float>		stack;
-		std::deque<char>	deque;
+		std::list<char>			list;
 	
 	public:
 		RPN();
